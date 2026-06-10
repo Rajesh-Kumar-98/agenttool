@@ -268,6 +268,7 @@ import { Router, RouterModule } from '@angular/router';
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       width: 100%;
       padding-top: 2rem;
+      margin-top: 4rem;
     }
   `]
 })
