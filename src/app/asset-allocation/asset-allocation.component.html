@@ -1,0 +1,313 @@
+<div class="form-page-container animated-fade-in">
+  <!-- Top Navigation Header -->
+  <header class="form-page-header">
+    <button class="btn-secondary btn-back" (click)="goBack()" *ngIf="!isEmployeeSigning">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span>Back to Home</span>
+    </button>
+    <div class="header-titles">
+      <h1>Asset Allocation Form</h1>
+      <span class="badge allocation-badge">AAF</span>
+    </div>
+    <p class="subtitle">Assign and record technology equipment distributed to company personnel.</p>
+  </header>
+
+  <!-- Link Expired Warning Screen -->
+  <div class="glass-panel expired-panel animated-scale" *ngIf="linkExpired">
+    <div class="expired-content">
+      <span class="material-symbols-outlined expired-icon">history</span>
+      <h2>This Signing Link Has Expired</h2>
+      <p>The document associated with this link has already been signed and submitted.</p>
+      <p class="muted-note">If you need to make corrections or request a new link, please contact your IT Admin.</p>
+    </div>
+  </div>
+
+  <!-- Main Form Content -->
+  <form [formGroup]="allocationForm" (ngSubmit)="onSubmit()" novalidate *ngIf="!linkExpired">
+    
+    <!-- SECTION 1: Employee Info -->
+    <section class="glass-panel form-section">
+      <div class="section-title-area">
+        <span class="material-symbols-outlined section-icon">badge</span>
+        <h2>1. Employee & Contract Details</h2>
+      </div>
+      <p class="section-subtitle">Specify contract parameters and employee contact coordinates.</p>
+
+      <div class="form-grid" formGroupName="employeeInfo">
+        <!-- Date -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('date')?.invalid">
+          <label for="date">Allocation Date <span class="required">*</span></label>
+          <input type="date" id="date" formControlName="date">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('date')?.errors?.['required']">Date is required</span>
+        </div>
+
+        <!-- Employee Name -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('employeeName')?.invalid">
+          <label for="employeeName">Employee Name <span class="required">*</span></label>
+          <input type="text" id="employeeName" placeholder="e.g. John Doe" formControlName="employeeName">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('employeeName')?.errors?.['required']">Employee Name is required</span>
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('employeeName')?.errors?.['minlength']">Name must be at least 2 chars</span>
+        </div>
+
+        <!-- Employee ID -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('employeeId')?.invalid">
+          <label for="employeeId">Employee ID <span class="required">*</span></label>
+          <input type="text" id="employeeId" placeholder="e.g. EMP1024" formControlName="employeeId">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('employeeId')?.errors?.['required']">Employee ID is required</span>
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('employeeId')?.errors?.['pattern']">Alphanumeric symbols only</span>
+        </div>
+
+        <!-- Department -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('department')?.invalid">
+          <label for="department">Department <span class="required">*</span></label>
+          <select id="department" formControlName="department">
+            <option value="" disabled selected>Select Department</option>
+            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+          </select>
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('department')?.errors?.['required']">Department is required</span>
+        </div>
+
+        <!-- Designation -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('designation')?.invalid">
+          <label for="designation">Designation <span class="required">*</span></label>
+          <input type="text" id="designation" placeholder="e.g. Staff Engineer" formControlName="designation">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('designation')?.errors?.['required']">Designation is required</span>
+        </div>
+
+        <!-- Location -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('location')?.invalid">
+          <label for="location">Location <span class="required">*</span></label>
+          <select id="location" formControlName="location">
+            <option value="" disabled selected>Select Location</option>
+            <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+          </select>
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('location')?.errors?.['required']">Location is required</span>
+        </div>
+
+        <!-- Date of Joining -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('dateOfJoining')?.invalid">
+          <label for="dateOfJoining">Date of Joining <span class="required">*</span></label>
+          <input type="date" id="dateOfJoining" formControlName="dateOfJoining">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('dateOfJoining')?.errors?.['required']">Date of Joining is required</span>
+        </div>
+
+        <!-- Email ID -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('emailId')?.invalid">
+          <label for="emailId">Email ID <span class="required">*</span></label>
+          <input type="email" id="emailId" placeholder="e.g. john.doe@company.com" formControlName="emailId">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('emailId')?.errors?.['required']">Email is required</span>
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('emailId')?.errors?.['email']">Enter a valid email address</span>
+        </div>
+
+        <!-- Contact Number -->
+        <div class="form-field-wrapper" [class.has-error]="submitted && employeeInfo.get('contactNumber')?.invalid">
+          <label for="contactNumber">Contact Number <span class="required">*</span></label>
+          <input type="text" id="contactNumber" placeholder="e.g. +1 555-0199" formControlName="contactNumber">
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('contactNumber')?.errors?.['required']">Contact is required</span>
+          <span class="error-text" *ngIf="submitted && employeeInfo.get('contactNumber')?.errors?.['pattern']">Enter a valid phone number</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Assets Details -->
+    <section class="glass-panel form-section">
+      <div class="section-header-row">
+        <div class="section-title-area">
+          <span class="material-symbols-outlined section-icon">devices</span>
+          <h2>2. Allocated Asset Details</h2>
+        </div>
+        <button type="button" class="btn-secondary btn-small" (click)="addAsset()" *ngIf="!isEmployeeSigning">
+          <span class="material-symbols-outlined icon-left">add</span>
+          Add Asset Row
+        </button>
+      </div>
+      <p class="section-subtitle">Record individual devices, serial codes, tracking tags, and hand-out condition.</p>
+
+      <div class="assets-container" formArrayName="assets">
+        <!-- Table for screens 768px+ -->
+        <div class="desktop-assets-table-wrapper">
+          <table class="custom-table assets-table">
+            <thead>
+              <tr>
+                <th style="width: 22%;">Asset Type *</th>
+                <th style="width: 22%;">Asset Tag *</th>
+                <th style="width: 22%;">Serial Number *</th>
+                <th style="width: 22%;">Brand / Model *</th>
+                <th style="width: 12%;">Condition *</th>
+                <th style="width: 5%;" *ngIf="!isEmployeeSigning">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let asset of assets.controls; let idx = index" [formGroupName]="idx">
+                <!-- Asset Type -->
+                <td [class.cell-error]="submitted && asset.get('assetType')?.invalid">
+                  <select formControlName="assetType" class="table-input">
+                    <option value="" disabled selected>Type</option>
+                    <option *ngFor="let type of assetTypes" [value]="type">{{ type }}</option>
+                  </select>
+                </td>
+                
+                <!-- Asset Tag -->
+                <td [class.cell-error]="submitted && asset.get('assetTag')?.invalid">
+                  <input type="text" formControlName="assetTag" placeholder="e.g. CDS-LP-101" class="table-input">
+                </td>
+                
+                <!-- Serial Number -->
+                <td [class.cell-error]="submitted && asset.get('serialNumber')?.invalid">
+                  <input type="text" formControlName="serialNumber" placeholder="e.g. S/N 998823" class="table-input">
+                </td>
+                
+                <!-- Brand / Model -->
+                <td [class.cell-error]="submitted && asset.get('brandModel')?.invalid">
+                  <input type="text" formControlName="brandModel" placeholder="e.g. Dell XPS 15" class="table-input">
+                </td>
+                
+                <!-- Condition -->
+                <td [class.cell-error]="submitted && asset.get('condition')?.invalid">
+                  <select formControlName="condition" class="table-input">
+                    <option *ngFor="let cond of conditions" [value]="cond">{{ cond }}</option>
+                  </select>
+                </td>
+                
+                <!-- Remove Action -->
+                <td class="action-cell" *ngIf="!isEmployeeSigning">
+                  <button type="button" class="btn-icon-danger" (click)="removeAsset(idx)" title="Remove item">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile view (stacked cards) for smaller screens -->
+        <div class="mobile-assets-cards">
+          <div *ngFor="let asset of assets.controls; let idx = index" [formGroupName]="idx" class="mobile-asset-card">
+            <div class="mobile-card-header">
+              <h3>Asset #{{ idx + 1 }}</h3>
+              <button type="button" class="btn-icon-danger" (click)="removeAsset(idx)" *ngIf="!isEmployeeSigning">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+
+            <div class="mobile-card-body">
+              <div class="mobile-field" [class.has-error]="submitted && asset.get('assetType')?.invalid">
+                <label>Asset Type *</label>
+                <select formControlName="assetType">
+                  <option value="" disabled selected>Select Asset Type</option>
+                  <option *ngFor="let type of assetTypes" [value]="type">{{ type }}</option>
+                </select>
+              </div>
+
+              <div class="mobile-field" [class.has-error]="submitted && asset.get('assetTag')?.invalid">
+                <label>Asset Tag *</label>
+                <input type="text" formControlName="assetTag" placeholder="e.g. CDS-LP-101">
+              </div>
+
+              <div class="mobile-field" [class.has-error]="submitted && asset.get('serialNumber')?.invalid">
+                <label>Serial Number *</label>
+                <input type="text" formControlName="serialNumber" placeholder="e.g. S/N 998823">
+              </div>
+
+              <div class="mobile-field" [class.has-error]="submitted && asset.get('brandModel')?.invalid">
+                <label>Brand / Model *</label>
+                <input type="text" formControlName="brandModel" placeholder="e.g. Dell XPS 15">
+              </div>
+
+              <div class="mobile-field" [class.has-error]="submitted && asset.get('condition')?.invalid">
+                <label>Condition *</label>
+                <select formControlName="condition">
+                  <option *ngFor="let cond of conditions" [value]="cond">{{ cond }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-secondary btn-full-width" (click)="addAsset()" *ngIf="!isEmployeeSigning">
+            <span class="material-symbols-outlined icon-left">add</span>
+            Add Asset Row
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Declaration & Signatures -->
+    <section class="glass-panel form-section">
+      <div class="section-title-area">
+        <span class="material-symbols-outlined section-icon">draw</span>
+        <h2>3. Declaration & Digital Sign-off</h2>
+      </div>
+      <p class="section-subtitle">Review policy acknowledgement and sign digitally to authorise asset handover.</p>
+
+      <!-- Declaration Box -->
+      <div class="declaration-block">
+        <span class="material-symbols-outlined info-icon">info</span>
+        <div class="declaration-text">
+          <p class="heading">Corporate Equipment Agreement Policy</p>
+          <p class="text">"I acknowledge receipt of the above-mentioned assets and agree to use and return them in good working condition upon request or separation from the company."</p>
+        </div>
+      </div>
+
+      <!-- Signatures Grid -->
+      <div class="signatures-grid" formGroupName="signatures">
+        
+        <!-- Employee Signature Pad -->
+        <div class="signature-pad-wrapper" *ngIf="isEmployeeSigning" [class.has-error]="submitted && signatures.get('employeeSignature')?.invalid">
+          <app-signature-pad 
+            label="Employee Signature" 
+            [required]="true"
+            [signerName]="signatures.get('employeeNameText')?.value"
+            formControlName="employeeSignature">
+          </app-signature-pad>
+          <span class="error-text" *ngIf="submitted && signatures.get('employeeSignature')?.errors?.['required']">Employee signature is required. Please draw on the pad.</span>
+          
+          <div class="signer-name-field" [class.has-error]="submitted && signatures.get('employeeNameText')?.invalid">
+            <label for="empNameTxt">Signer Print Name *</label>
+            <input type="text" id="empNameTxt" placeholder="Employee Name" formControlName="employeeNameText">
+            <span class="error-text" *ngIf="submitted && signatures.get('employeeNameText')?.errors?.['required']">Print name is required</span>
+          </div>
+        </div>
+
+        <!-- IT Admin Signature Pad -->
+        <div class="signature-pad-wrapper" [class.has-error]="submitted && signatures.get('itAdminSignature')?.invalid">
+          <app-signature-pad #adminSig
+            label="IT Admin Signature" 
+            [required]="true"
+            [signerName]="signatures.get('itAdminNameText')?.value"
+            formControlName="itAdminSignature">
+          </app-signature-pad>
+          <span class="error-text" *ngIf="submitted && signatures.get('itAdminSignature')?.errors?.['required']">IT Admin signature is required. Please draw on the pad.</span>
+          
+          <div class="signer-name-field" [class.has-error]="submitted && signatures.get('itAdminNameText')?.invalid">
+            <label for="adminNameTxt">IT Admin Print Name *</label>
+            <input type="text" id="adminNameTxt" placeholder="IT Admin Name" formControlName="itAdminNameText">
+            <span class="error-text" *ngIf="submitted && signatures.get('itAdminNameText')?.errors?.['required']">Print name is required</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global validation errors message -->
+    <div class="validation-summary-card glass-panel" *ngIf="submitted && allocationForm.invalid">
+      <span class="material-symbols-outlined warn-icon">warning</span>
+      <div>
+        <h4>Form Submission Failed</h4>
+        <p>Please review and complete all required fields and signatures.</p>
+      </div>
+    </div>
+
+    <!-- Submit buttons -->
+    <div class="form-submit-row">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="button" class="btn-accent" (click)="generateSigningLink()" *ngIf="!isEmployeeSigning">
+        <span class="material-symbols-outlined icon-left">link</span>
+        Generate Signing Link
+      </button>
+      <button type="submit" class="btn-primary">
+        <span class="material-symbols-outlined icon-left">picture_as_pdf</span>
+        Preview & Generate PDF
+      </button>
+    </div>
+
+  </form>
+</div>
